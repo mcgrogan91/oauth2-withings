@@ -3,6 +3,7 @@
 namespace waytohealth\OAuth2\Client\Provider;
 
 use League\OAuth2\Client\Provider\AbstractProvider;
+use League\OAuth2\Client\Provider\GenericResourceOwner;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
 use League\OAuth2\Client\Tool\BearerAuthorizationTrait;
@@ -86,7 +87,7 @@ class Withings extends AbstractProvider
      */
     public function getResourceOwnerDetailsUrl(AccessToken $token)
     {
-        return static::BASE_WITHINGS_API_URL.'/v2/user?action=getdevice';
+        return static::BASE_WITHINGS_API_URL.'/v2/user?action=getdevice&access_token='.$token->getToken();
     }
 
     /**
@@ -131,16 +132,6 @@ class Withings extends AbstractProvider
     }
 
     /**
-     * Returns the string used to separate scopes.
-     *
-     * @return string
-     */
-    protected function getScopeSeparator()
-    {
-        return ' ';
-    }
-
-    /**
      * Returns authorization parameters based on provided options.
      * Withings does not use the 'approval_prompt' param and here we remove it.
      *
@@ -182,11 +173,11 @@ class Withings extends AbstractProvider
      * @param array       $response
      * @param AccessToken $token
      *
-     * @return FitbitUser
+     * @return GenericResourceOwner
      */
     public function createResourceOwner(array $response, AccessToken $token)
     {
-        return new FitbitUser($response);
+        return new GenericResourceOwner($response, 'id');
     }
 
     /**
@@ -196,7 +187,7 @@ class Withings extends AbstractProvider
      */
     protected function getAccessTokenResourceOwnerId()
     {
-        return 'user_id';
+        return 'userid';
     }
 
     /**
